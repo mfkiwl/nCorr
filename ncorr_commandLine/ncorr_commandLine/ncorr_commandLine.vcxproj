@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{77AAA1F7-A628-4AD0-A1BB-C2545E58944E}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>ncorr_commandLine</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Users\brent\Documents\Visual Studio 2015\Projects\ncorr\lib\Suite-Sparse\suitesparse-include;C:\Users\brent\Documents\Visual Studio 2015\Projects\ncorr\lib\OpenCV;C:\Users\brent\Documents\Visual Studio 2015\Projects\ncorr\lib\Suite-Sparse;C:\Users\brent\Documents\Visual Studio 2015\Projects\ncorr\lib\fftw3;C:\Users\brent\Documents\Visual Studio 2015\Projects\ncorr\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>C:\Users\brent\Documents\Visual Studio 2015\Projects\ncorr\lib\fftw3\libfftw3-3.lib;C:\Users\brent\Documents\Visual Studio 2015\Projects\ncorr\lib\Suite-Sparse\libamdd.lib;C:\Users\brent\Documents\Visual Studio 2015\Projects\ncorr\lib\Suite-Sparse\libccolamdd.lib;C:\Users\brent\Documents\Visual Studio 2015\Projects\ncorr\lib\Suite-Sparse\libcholmodd.lib;C:\Users\brent\Documents\Visual Studio 2015\Projects\ncorr\lib\Suite-Sparse\libcolamdd.lib;C:\Users\brent\Documents\Visual Studio 2015\Projects\ncorr\lib\Suite-Sparse\libspqrd.lib;C:\Users\brent\Documents\Visual Studio 2015\Projects\ncorr\lib\Suite-Sparse\libcxsparsed.lib;C:\Users\brent\Documents\Visual Studio 2015\Projects\ncorr\lib\Suite-Sparse\suitesparseconfigd.lib;C:\Users\brent\Documents\Visual Studio 2015\Projects\ncorr\lib\Suite-Sparse\lapack_blas_windows\libblas.lib;C:\Users\brent\Documents\Visual Studio 2015\Projects\ncorr\lib\Suite-Sparse\lapack_blas_windows\liblapack.lib;opencv_world300d.lib;opencv_world300.lib;C:\Users\brent\Documents\Visual Studio 2015\Projects\ncorr\Release\ncorr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\opencv\build\x86\vc12\lib;C:\Users\brent\Documents\Visual Studio 2015\Projects\ncorr\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>ExternalLibs\ncorr\include;ExternalLibs\ncorr\lib\fftw3;ExternalLibs\ncorr\lib\Suite-Sparse;ExternalLibs\ncorr\opencv\build\include;ExternalLibs\ncorr\lib\OpenCV;ExternalLibs\ncorr\lib\Suite-Sparse\suitesparse-include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>ExternalLibs\ncorr\lib\fftw3\libfftw3-3.lib;ExternalLibs\ncorr\lib\Suite-Sparse\libamd.lib;ExternalLibs\ncorr\lib\Suite-Sparse\libccolamd.lib;ExternalLibs\ncorr\lib\Suite-Sparse\libcholmod.lib;ExternalLibs\ncorr\lib\Suite-Sparse\libcolamd.lib;ExternalLibs\ncorr\lib\Suite-Sparse\libspqr.lib;ExternalLibs\ncorr\lib\Suite-Sparse\libcxsparse.lib;ExternalLibs\ncorr\lib\Suite-Sparse\suitesparseconfig.lib;ExternalLibs\ncorr\lib\Suite-Sparse\lapack_blas_windows\libblas.lib;ExternalLibs\ncorr\lib\Suite-Sparse\lapack_blas_windows\liblapack.lib;ExternalLibs\ncorr\opencv\build\x86\vc12\lib\opencv_world300.lib;opencv_calib3d300.lib;opencv_core300.lib;opencv_features2d300.lib;opencv_flann300.lib;opencv_highgui300.lib;opencv_imgproc300.lib;opencv_ml300.lib;opencv_objdetect300.lib;opencv_photo300.lib;opencv_stitching300.lib;opencv_superres300.lib;opencv_ts300.lib;opencv_video300.lib;opencv_videostab300.lib;ncorr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>ExternalLibs\ncorr\Release;ExternalLibs\ncorr\opencv\build\x86\vc12\staticlib;ExternalLibs\ncorr\opencv\build\x86\vc12\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ncorr_commandLine.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
