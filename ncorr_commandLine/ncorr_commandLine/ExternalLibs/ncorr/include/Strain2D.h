@@ -103,8 +103,8 @@ namespace ncorr {
 				double d_exx = *i_exx;
 				double det = d_eyy*d_exx - d_exy*d_exy;
 				double tr = d_exx + d_eyy;
-				double eigenfirst = tr / 2 + std::sqrt(std::pow(tr, 2.0) / 4 - det);
-				double eigensecond = tr / 2 - std::sqrt(std::pow(tr, 2.0) / 4 - det);
+				double eigenfirst = tr / 2 + std::sqrt(std::pow(d_eyy-d_exx, 2.0) / 4 + std::pow(d_exy, 2.0));
+				double eigensecond = tr / 2 - std::sqrt(std::pow(tr, 2.0) / 4 + std::pow(d_exy, 2.0));
 				*i_e1 = std::max(eigenfirst, eigensecond);
 				*i_e2 = std::min(eigenfirst, eigensecond);
 				++i_eyy;
