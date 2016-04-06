@@ -51,6 +51,371 @@ double getMean(const Data2D & dataOfInterest) {
 	return sumValue / size;
 }
 
+void exportStrainData(string outputFilesDirectory, string csvExport, strain_analysis_output strain_output) {
+	// only reachable before Eulerian if.
+	string dataPath = outputFilesDirectory + "data/";
+	remove(dataPath.c_str());
+	_mkdir(dataPath.c_str());
+	vector<string> exportVaribles = split(csvExport, ",", false);
+	cout << csvExport << endl;
+	for (int idx = 0; idx < exportVaribles.size(); idx++) {
+
+		if (exportVaribles[idx].compare("mean exx") == 0) {
+			string exxFileName = dataPath + "exx.txt";
+			remove(exxFileName.c_str());
+			/*ofstream datafile(exxFileName.c_str());
+
+			if (datafile.is_open()) {
+			//cout<<"data file open"<<endl;
+			for (int idx2 = 0; idx2 < strain_output.strains.size();
+			idx2++) {
+			Data2D exx_strains = strain_output.strains[idx2].get_exx();
+			datafile << getMean(exx_strains) << "\n";
+
+			}
+			}
+
+			datafile.close();*/
+
+			FILE* f = fopen(exxFileName.c_str(), "w");
+			if (f == NULL)
+			{
+				printf("Error opening file!\n");
+				exit(1);
+			}
+			else {
+				for (int idx2 = 0; idx2 < strain_output.strains.size();
+				idx2++) {
+					Data2D exx_strains = strain_output.strains[idx2].get_exx();
+					double trueStrain = std::log(1 + getMean(exx_strains));
+					fprintf(f, "%f\n", trueStrain);
+
+				}
+			}
+
+		}
+		if (exportVaribles[idx].compare("mean eyy") == 0) {
+			string exxFileName = dataPath + "eyy.txt";
+			remove(exxFileName.c_str());
+			/*ofstream datafile(exxFileName.c_str());
+			if (datafile.is_open()) {
+			//cout<<"data file open"<<endl;
+			for (int idx2 = 0; idx2 < strain_output.strains.size();
+			idx2++) {
+			Data2D eyy_strains = strain_output.strains[idx2].get_eyy();
+			datafile << getMean(eyy_strains) << "\n";
+
+			}
+			}
+
+			datafile.close(); */
+			FILE* f = fopen(exxFileName.c_str(), "w");
+			if (f == NULL)
+			{
+				printf("Error opening file!\n");
+				exit(1);
+			}
+			else {
+				for (int idx2 = 0; idx2 < strain_output.strains.size();
+				idx2++) {
+					Data2D eyy_strains = strain_output.strains[idx2].get_eyy();
+					double trueStrain = std::log(1 + getMean(eyy_strains));
+					fprintf(f, "%f\n", trueStrain);
+
+				}
+			}
+
+		}
+		if (exportVaribles[idx].compare("mean exy") == 0) {
+			string exxFileName = dataPath + "exy.txt";
+			remove(exxFileName.c_str());
+			/*ofstream datafile(exxFileName.c_str());
+			if (datafile.is_open()) {
+			//cout<<"data file open"<<endl;
+			for (int idx2 = 0; idx2 < strain_output.strains.size();
+			idx2++) {
+
+			Data2D exy_strains = strain_output.strains[idx2].get_exy();
+			datafile << getMean(exy_strains) << "\n";
+
+			}
+			}
+
+			datafile.close();*/
+
+			FILE* f = fopen(exxFileName.c_str(), "w");
+			if (f == NULL)
+			{
+				printf("Error opening file!\n");
+				exit(1);
+			}
+			else {
+				for (int idx2 = 0; idx2 < strain_output.strains.size();
+				idx2++) {
+
+					Data2D exy_strains = strain_output.strains[idx2].get_exy();
+					double trueStrain = std::log(1 + getMean(exy_strains));
+					fprintf(f, "%f\n", trueStrain);
+
+				}
+			}
+
+		}
+		if (exportVaribles[idx].compare("mean e1") == 0) {
+			string exxFileName = dataPath + "e1.txt";
+			remove(exxFileName.c_str());
+			/*ofstream datafile(exxFileName.c_str());
+			if (datafile.is_open()) {
+			//cout<<"data file open"<<endl;
+			for (int idx2 = 0; idx2 < strain_output.strains.size();
+			idx2++) {
+
+			Data2D exy_strains = strain_output.strains[idx2].get_e1();
+			datafile << getMean(exy_strains) << "\n";
+
+			}
+			}
+
+			datafile.close();*/
+
+			FILE* f = fopen(exxFileName.c_str(), "w");
+			if (f == NULL)
+			{
+				printf("Error opening file!\n");
+				exit(1);
+			}
+			else {
+				for (int idx2 = 0; idx2 < strain_output.strains.size();
+				idx2++) {
+
+					Data2D e1_strains = strain_output.strains[idx2].get_e1();
+					double trueStrain = std::log(1 + getMean(e1_strains));
+					fprintf(f, "%f\n", trueStrain);
+
+				}
+			}
+
+		}
+	}
+}
+
+void processImagesFromBinary(DIC_analysis_input & DIC_input, DIC_analysis_output & DIC_output, strain_analysis_input& strain_input, 
+							 strain_analysis_output& strain_output, string loadDIC_inputPath, 
+							 string loadDIC_outputPath, int strainRadius, SUBREGION subRegionStrain, INTERP interpType, string units, double units_per_px) {
+
+	
+
+	// Set strain input
+
+
+	DIC_input = DIC_analysis_input::load(loadDIC_inputPath);
+	DIC_output = DIC_analysis_output::load(loadDIC_outputPath);
+	DIC_output = change_perspective(DIC_output, interpType);
+	// Set units of DIC_output (provide units/pixel)
+	DIC_output = set_units(DIC_output, units, units_per_px);
+	// Set strain input
+	strain_input = strain_analysis_input(DIC_input, DIC_output,
+		subRegionStrain,					// Strain subregion shape
+		strainRadius);						// Strain subregion radius
+
+											// Perform strain_analysis
+
+	strain_output = strain_analysis(strain_input);
+}
+
+void saveImages(string videoExport, strain_analysis_input &strain_input, vector<string> getImagesArray, string videoPath, string strainType, DIC_analysis_output &DIC_output, strain_analysis_output &strain_output, double strainMax)
+{
+	vector<string> exports = split(videoExport, ",", false);
+	for (int idx = 0; idx < exports.size(); idx++) {
+		if (exports[idx].compare("v") == 0) {
+			for (int i = 1; i < strain_input.DIC_input.imgs.size(); i++) {
+
+				string imageName = getFileNameFromPath(
+					getImagesArray[i + 1]);
+				string saveImagePath = videoPath + imageName + "_v_"
+					+ strainType + ".jpg";
+				Data2D v_dips = DIC_output.disps[i - 1].get_v();
+				double minDisp = min(prctile(v_dips.get_array(), 0.01),
+					prctile(v_dips.get_array(), 0.01));
+				double maxDisp = max(prctile(v_dips.get_array(), 0.99),
+					prctile(v_dips.get_array(), 0.99));
+				save_ncorr_data_over_img(saveImagePath,
+					strain_input.DIC_input.imgs[i - 1], v_dips, 0.5,
+					minDisp, maxDisp, true, true, true,
+					strain_input.DIC_output.units,
+					strain_input.DIC_output.units_per_pixel, 50, 1.0,
+					11, cv::COLORMAP_JET);
+
+			}
+
+		}
+
+		if (exports[idx].compare("u") == 0) {
+
+			for (int i = 1; i < strain_input.DIC_input.imgs.size(); i++) {
+
+				string imageName = getFileNameFromPath(
+					getImagesArray[i + 1]);
+				string saveImagePath = videoPath + imageName + "_u_"
+					+ strainType + ".jpg";
+				Data2D u_dips = DIC_output.disps[i - 1].get_u();
+				double minDisp = min(prctile(u_dips.get_array(), 0.01),
+					prctile(u_dips.get_array(), 0.01));
+				double maxDisp = max(prctile(u_dips.get_array(), 0.99),
+					prctile(u_dips.get_array(), 0.99));
+
+				save_ncorr_data_over_img(saveImagePath,
+					strain_input.DIC_input.imgs[i - 1], u_dips, 0.5,
+					minDisp, maxDisp, true, false, false,
+					strain_input.DIC_output.units,
+					strain_input.DIC_output.units_per_pixel, 50, 1.0,
+					11, cv::COLORMAP_JET);
+
+			}
+		}
+		std::cout << "Made it here 6" << std::endl;
+		if (exports[idx].compare("eyy") == 0) {
+			for (int i = 1; i < strain_input.DIC_input.imgs.size(); i++) {
+
+				string imageName = getFileNameFromPath(
+					getImagesArray[i + 1]);
+				string saveImagePath = videoPath + imageName + "_eyy_"
+					+ strainType + ".jpg";
+				Data2D eyy_strains = strain_output.strains[i - 1].get_eyy();
+				double maxEyy;
+				if (strainMax < 0) {
+
+					maxEyy = max(prctile(eyy_strains.get_array(), 0.99),
+						prctile(eyy_strains.get_array(), 0.99));
+				}
+				else {
+					maxEyy = strainMax;
+				}
+				save_ncorr_data_over_img(saveImagePath,
+					strain_input.DIC_input.imgs[i - 1], eyy_strains,
+					0.5, 0, maxEyy, true, false, false,
+					strain_input.DIC_output.units,
+					strain_input.DIC_output.units_per_pixel, 50, 1.0,
+					11, cv::COLORMAP_JET);
+
+			}
+		}
+
+		if (exports[idx].compare("exy") == 0) {
+			for (int i = 1; i < strain_input.DIC_input.imgs.size(); i++) {
+
+				string imageName = getFileNameFromPath(
+					getImagesArray[i + 1]);
+				string saveImagePath = videoPath + imageName + "_exy_"
+					+ strainType + ".jpg";
+				Data2D exy_strains = strain_output.strains[i - 1].get_exy();
+				double maxExy;
+				if (strainMax < 0) {
+
+					maxExy = max(prctile(exy_strains.get_array(), 0.99),
+						prctile(exy_strains.get_array(), 0.99));
+				}
+				else {
+					maxExy = strainMax;
+				}
+				save_ncorr_data_over_img(saveImagePath,
+					strain_input.DIC_input.imgs[i - 1], exy_strains,
+					0.5, 0, maxExy, true, false, false,
+					strain_input.DIC_output.units,
+					strain_input.DIC_output.units_per_pixel, 50, 1.0,
+					11, cv::COLORMAP_JET);
+
+			}
+		}
+		if (exports[idx].compare("exx") == 0) {
+
+			for (int i = 1; i < strain_input.DIC_input.imgs.size(); i++) {
+
+				string imageName = getFileNameFromPath(
+					getImagesArray[i + 1]);
+				string saveImagePath = videoPath + imageName + "_exx_"
+					+ strainType + ".jpg";
+				Data2D exx_strains = strain_output.strains[i - 1].get_exx();
+				double maxExx;
+				if (strainMax < 0) {
+
+					maxExx = max(prctile(exx_strains.get_array(), 0.99),
+						prctile(exx_strains.get_array(), 0.99));
+				}
+				else {
+					maxExx = strainMax;
+				}
+				save_ncorr_data_over_img(saveImagePath,
+					strain_input.DIC_input.imgs[i - 1], exx_strains,
+					0.5, 0, maxExx, true, false, false,
+					strain_input.DIC_output.units,
+					strain_input.DIC_output.units_per_pixel, 50, 1.0,
+					11, cv::COLORMAP_JET);
+
+			}
+		}
+
+		if (exports[idx].compare("e1") == 0) {
+			double maxCalcStrain = 0;
+			for (int i = 1; i < strain_input.DIC_input.imgs.size(); i++) {
+				Data2D e1_strains = strain_output.strains[i - 1].get_e1();
+				maxCalcStrain = max(maxCalcStrain,
+						prctile(e1_strains.get_array(), 0.99));
+			}
+			for (int i = 1; i < strain_input.DIC_input.imgs.size(); i++) {
+
+				string imageName = getFileNameFromPath(
+					getImagesArray[i + 1]);
+				string saveImagePath = videoPath + imageName + "_e1_"
+					+ strainType + ".jpg";
+				Data2D e1_strains = strain_output.strains[i - 1].get_e1();
+
+				double maxE1;
+				if (strainMax < 0) {
+					maxE1 = maxCalcStrain;
+				}
+				else {
+					maxE1 = strainMax;
+				}
+				save_ncorr_data_over_img(saveImagePath,
+					strain_input.DIC_input.imgs[i - 1], e1_strains,
+					0.5, 0, maxE1, true, false, false,
+					strain_input.DIC_output.units,
+					strain_input.DIC_output.units_per_pixel, 50, 1.0,
+					11, cv::COLORMAP_JET);
+			}
+		}
+		std::cout << "Made it here 10" << std::endl;
+		if (exports[idx].compare("e2") == 0) {
+			for (int i = 1; i < strain_input.DIC_input.imgs.size(); i++) {
+
+				string imageName = getFileNameFromPath(
+					getImagesArray[i + 1]);
+				string saveImagePath = videoPath + imageName + "_e2_"
+					+ strainType + ".jpg";
+				Data2D e2_strains = strain_output.strains[i - 1].get_e2();
+				double maxE2;
+				if (strainMax < 0) {
+
+					maxE2 = max(prctile(e2_strains.get_array(), 0.99),
+						prctile(e2_strains.get_array(), 0.99));
+				}
+				else {
+					maxE2 = strainMax;
+				}
+				save_ncorr_data_over_img(saveImagePath,
+					strain_input.DIC_input.imgs[i - 1], e2_strains,
+					0.5, 0, maxE2, true, false, false,
+					strain_input.DIC_output.units,
+					strain_input.DIC_output.units_per_pixel, 50, 1.0,
+					11, cv::COLORMAP_JET);
+
+			}
+		}
+
+	}
+}
+
 int main(int argc, char *argv[]) {
 	if (argc != 3) {
 		throw std::invalid_argument(
@@ -274,24 +639,19 @@ int main(int argc, char *argv[]) {
 	loadStrain_outputPath = split(split(firstLevelSplit[6], "\n", false)[4],
 		"\t")[1];
 
+	strain_analysis_input strain_input_lagrange;
+	strain_analysis_output strain_output_lagrange;
+	strain_analysis_input strain_input_eulerian;
+	strain_analysis_output strain_output_eulerian;
+	DIC_analysis_output DIC_output_eulerian;
+	DIC_analysis_input DIC_input_eulerian;
+
 	// Determine whether or not to perform calculations or 
 	// load data (only load data if analysis has already 
 	// been done and saved or else throw an exception).
 	std::string input(argv[1]);
 	if (input == "load") {
-		std::cout << loadDIC_inputPath << std::endl;
-		std::cout << loadDIC_outputPath << std::endl;
-		std::cout << loadStrain_inputPath << std::endl;
-		std::cout << loadStrain_outputPath << std::endl;
-		DIC_input = DIC_analysis_input::load(loadDIC_inputPath);
-		DIC_output = DIC_analysis_output::load(loadDIC_outputPath);
-		// Set strain input
-		strain_input = strain_analysis_input(DIC_input, DIC_output,
-			subRegionStrain,					// Strain subregion shape
-			strainRadius);						// Strain subregion radius
-
-												// Perform strain_analysis
-		strain_output = strain_analysis(strain_input);
+		processImagesFromBinary(DIC_input, DIC_output, strain_input, strain_output, loadDIC_inputPath, loadDIC_outputPath, strainRadius, subRegionStrain,  interpType,  units,  units_per_px);
 	}
 	else if (input == "calculate") {
 
@@ -319,21 +679,6 @@ int main(int argc, char *argv[]) {
 		// Perform DIC_analysis    
 		DIC_output = DIC_analysis(DIC_input);
 		//std::cout << "This happened now." << std::endl;
-		// Convert DIC_output to Eulerian perspective
-		if (isEulerian) {
-			DIC_output = change_perspective(DIC_output, interpType);
-		}
-		// Set units of DIC_output (provide units/pixel)
-		DIC_output = set_units(DIC_output, units, units_per_px);
-
-		// Set strain input
-		strain_input = strain_analysis_input(DIC_input, DIC_output,
-			subRegionStrain,					// Strain subregion shape
-			strainRadius);						// Strain subregion radius
-
-												// Perform strain_analysis
-		strain_output = strain_analysis(strain_input);
-
 		// Save outputs as binary
 		string savePath = outputFilesDirectory + "save/";
 		remove(savePath.c_str());
@@ -341,13 +686,33 @@ int main(int argc, char *argv[]) {
 
 		string saveDIC_inputPath = savePath + "DIC_input.bin";
 		string saveDIC_outputPath = savePath + "DIC_output.bin";
-		string saveStrain_inputPath = savePath + "strain_input.bin";
-		string saveStrain_outputPath = savePath + "strain_output.bin";
 
 		save(DIC_input, saveDIC_inputPath);
 		save(DIC_output, saveDIC_outputPath);
-		save(strain_input, saveStrain_inputPath);
-		save(strain_output, saveStrain_outputPath);
+
+		DIC_analysis_output DIC_output_original = DIC_output;
+		//DIC_output = set_units(DIC_output, units, units_per_px);
+		// Set strain input
+		strain_input_lagrange = strain_analysis_input(DIC_input, DIC_output_original,
+			subRegionStrain,					// Strain subregion shape
+			strainRadius);						// Strain subregion radius
+
+												// Perform strain_analysis
+		strain_output_lagrange = strain_analysis(strain_input_lagrange);
+
+		//export strain data here, and here only.
+		exportStrainData(outputFilesDirectory, csvExport, strain_output_lagrange);
+
+		strain_output = strain_output_lagrange;
+		DIC_output=DIC_output_original;
+		strain_input = strain_input_lagrange;
+		
+		DIC_output = set_units(DIC_output, units, units_per_px);
+		//export images
+
+		if (isEulerian) {
+			processImagesFromBinary(DIC_input_eulerian, DIC_output_eulerian, strain_input_eulerian, strain_output_eulerian, saveDIC_inputPath, saveDIC_outputPath, strainRadius, subRegionStrain, interpType, units, units_per_px);
+		}
 	}
 	else {
 		throw std::invalid_argument(
@@ -432,341 +797,13 @@ int main(int argc, char *argv[]) {
 	}
 
 	else {
+		if(isEulerian)
+			saveImages(videoExport, strain_input_eulerian, getImagesArray, videoPath, strainType, DIC_output_eulerian, strain_output_eulerian, strainMax);
+		else
+			saveImages(videoExport, strain_input, getImagesArray, videoPath, strainType, DIC_output, strain_output, strainMax);
 
-		vector<string> exports = split(videoExport, ",", false);
-		std::cout << "Made it here 2" << std::endl;
-		for (int idx = 0; idx < exports.size(); idx++) {
-			std::cout << "Made it here 3" << std::endl;
-			if (exports[idx].compare("v") == 0) {
-				for (int i = 1; i < strain_input.DIC_input.imgs.size(); i++) {
-
-					string imageName = getFileNameFromPath(
-						getImagesArray[i + 1]);
-					string saveImagePath = videoPath + imageName + "_v_"
-						+ strainType + ".jpg";
-					Data2D v_dips = DIC_output.disps[i - 1].get_v();
-					double minDisp = min(prctile(v_dips.get_array(), 0.01),
-						prctile(v_dips.get_array(), 0.01));
-					double maxDisp = max(prctile(v_dips.get_array(), 0.99),
-						prctile(v_dips.get_array(), 0.99));
-					std::cout << "Made it here 4" << std::endl;
-					save_ncorr_data_over_img(saveImagePath,
-						strain_input.DIC_input.imgs[i - 1], v_dips, 0.5,
-						minDisp, maxDisp, true, true, true,
-						strain_input.DIC_output.units,
-						strain_input.DIC_output.units_per_pixel, 50, 1.0,
-						11, cv::COLORMAP_JET);
-
-				}
-
-			}
-			std::cout << "Made it here 5" << std::endl;
-			if (exports[idx].compare("u") == 0) {
-
-				for (int i = 1; i < strain_input.DIC_input.imgs.size(); i++) {
-
-					string imageName = getFileNameFromPath(
-						getImagesArray[i + 1]);
-					string saveImagePath = videoPath + imageName + "_u_"
-						+ strainType + ".jpg";
-					Data2D u_dips = DIC_output.disps[i - 1].get_u();
-					double minDisp = min(prctile(u_dips.get_array(), 0.01),
-						prctile(u_dips.get_array(), 0.01));
-					double maxDisp = max(prctile(u_dips.get_array(), 0.99),
-						prctile(u_dips.get_array(), 0.99));
-
-					save_ncorr_data_over_img(saveImagePath,
-						strain_input.DIC_input.imgs[i - 1], u_dips, 0.5,
-						minDisp, maxDisp, true, false, false,
-						strain_input.DIC_output.units,
-						strain_input.DIC_output.units_per_pixel, 50, 1.0,
-						11, cv::COLORMAP_JET);
-
-				}
-			}
-			std::cout << "Made it here 6" << std::endl;
-			if (exports[idx].compare("eyy") == 0) {
-				for (int i = 1; i < strain_input.DIC_input.imgs.size(); i++) {
-
-					string imageName = getFileNameFromPath(
-						getImagesArray[i + 1]);
-					string saveImagePath = videoPath + imageName + "_eyy_"
-						+ strainType + ".jpg";
-					Data2D eyy_strains = strain_output.strains[i - 1].get_eyy();
-					double maxEyy;
-					if (strainMax < 0) {
-
-						maxEyy = max(prctile(eyy_strains.get_array(), 0.99),
-							prctile(eyy_strains.get_array(), 0.99));
-					}
-					else {
-						maxEyy = strainMax;
-					}
-					save_ncorr_data_over_img(saveImagePath,
-						strain_input.DIC_input.imgs[i - 1], eyy_strains,
-						0.5, 0, maxEyy, true, false, false,
-						strain_input.DIC_output.units,
-						strain_input.DIC_output.units_per_pixel, 50, 1.0,
-						11, cv::COLORMAP_JET);
-
-				}
-			}
-
-			if (exports[idx].compare("exy") == 0) {
-				for (int i = 1; i < strain_input.DIC_input.imgs.size(); i++) {
-
-					string imageName = getFileNameFromPath(
-						getImagesArray[i + 1]);
-					string saveImagePath = videoPath + imageName + "_exy_"
-						+ strainType + ".jpg";
-					Data2D exy_strains = strain_output.strains[i - 1].get_exy();
-					double maxExy;
-					if (strainMax < 0) {
-
-						maxExy = max(prctile(exy_strains.get_array(), 0.99),
-							prctile(exy_strains.get_array(), 0.99));
-					}
-					else {
-						maxExy = strainMax;
-					}
-					save_ncorr_data_over_img(saveImagePath,
-						strain_input.DIC_input.imgs[i - 1], exy_strains,
-						0.5, 0, maxExy, true, false, false,
-						strain_input.DIC_output.units,
-						strain_input.DIC_output.units_per_pixel, 50, 1.0,
-						11, cv::COLORMAP_JET);
-
-				}
-			}
-			if (exports[idx].compare("exx") == 0) {
-				for (int i = 1; i < strain_input.DIC_input.imgs.size(); i++) {
-
-					string imageName = getFileNameFromPath(
-						getImagesArray[i + 1]);
-					string saveImagePath = videoPath + imageName + "_exx_"
-						+ strainType + ".jpg";
-					Data2D exx_strains = strain_output.strains[i - 1].get_exx();
-					double maxExx;
-					if (strainMax < 0) {
-
-						maxExx = max(prctile(exx_strains.get_array(), 0.99),
-							prctile(exx_strains.get_array(), 0.99));
-					}
-					else {
-						maxExx = strainMax;
-					}
-					save_ncorr_data_over_img(saveImagePath,
-						strain_input.DIC_input.imgs[i - 1], exx_strains,
-						0.5, 0, maxExx, true, false, false,
-						strain_input.DIC_output.units,
-						strain_input.DIC_output.units_per_pixel, 50, 1.0,
-						11, cv::COLORMAP_JET);
-
-				}
-			}
-			std::cout << "Made it here 9" << std::endl;
-			if (exports[idx].compare("e1") == 0) {
-				for (int i = 1; i < strain_input.DIC_input.imgs.size(); i++) {
-
-					string imageName = getFileNameFromPath(
-						getImagesArray[i + 1]);
-					string saveImagePath = videoPath + imageName + "_e1_"
-						+ strainType + ".jpg";
-					Data2D e1_strains = strain_output.strains[i - 1].get_e1();
-
-					double maxE1;
-					if (strainMax < 0) {
-
-						maxE1 = max(prctile(e1_strains.get_array(), 0.99),
-							prctile(e1_strains.get_array(), 0.99));
-					}
-					else {
-						maxE1 = strainMax;
-					}
-					save_ncorr_data_over_img(saveImagePath,
-						strain_input.DIC_input.imgs[i - 1], e1_strains,
-						0.5, 0, maxE1, true, false, false,
-						strain_input.DIC_output.units,
-						strain_input.DIC_output.units_per_pixel, 50, 1.0,
-						11, cv::COLORMAP_JET);
-				}
-			}
-			std::cout << "Made it here 10" << std::endl;
-			if (exports[idx].compare("e2") == 0) {
-				for (int i = 1; i < strain_input.DIC_input.imgs.size(); i++) {
-
-					string imageName = getFileNameFromPath(
-						getImagesArray[i + 1]);
-					string saveImagePath = videoPath + imageName + "_e2_"
-						+ strainType + ".jpg";
-					Data2D e2_strains = strain_output.strains[i - 1].get_e2();
-					double maxE2;
-					if (strainMax < 0) {
-
-						maxE2 = max(prctile(e2_strains.get_array(), 0.99),
-							prctile(e2_strains.get_array(), 0.99));
-					}
-					else {
-						maxE2 = strainMax;
-					}
-					save_ncorr_data_over_img(saveImagePath,
-						strain_input.DIC_input.imgs[i - 1], e2_strains,
-						0.5, 0, maxE2, true, false, false,
-						strain_input.DIC_output.units,
-						strain_input.DIC_output.units_per_pixel, 50, 1.0,
-						11, cv::COLORMAP_JET);
-
-				}
-			}
-			
-		}
 	}
 	
-	std::cout << "Made it here 11" << std::endl;
-
-	string dataPath = outputFilesDirectory + "data/";
-	remove(dataPath.c_str());
-	_mkdir(dataPath.c_str());
-	vector<string> exportVaribles = split(csvExport, ",", false);
-	cout << csvExport << endl;
-	for (int idx = 0; idx < exportVaribles.size(); idx++) {
-
-		if (exportVaribles[idx].compare("mean exx") == 0) {
-			string exxFileName = dataPath + "exx.txt";
-			remove(exxFileName.c_str());
-			/*ofstream datafile(exxFileName.c_str());
-
-			if (datafile.is_open()) {
-				//cout<<"data file open"<<endl;
-				for (int idx2 = 0; idx2 < strain_output.strains.size();
-				idx2++) {
-					Data2D exx_strains = strain_output.strains[idx2].get_exx();
-					datafile << getMean(exx_strains) << "\n";
-
-				}
-			}
-			
-			datafile.close();*/
-
-			FILE* f = fopen(exxFileName.c_str(), "w");
-			if (f == NULL)
-			{
-				printf("Error opening file!\n");
-				exit(1);
-			}
-			else {
-				for (int idx2 = 0; idx2 < strain_output.strains.size();
-				idx2++) {
-					Data2D exx_strains = strain_output.strains[idx2].get_exx();
-					double d = getMean(exx_strains);
-					fprintf(f, "%f\n", d);
-
-				}
-			}
-
-		}
-		if (exportVaribles[idx].compare("mean eyy") == 0) {
-			string exxFileName = dataPath + "eyy.txt";
-			remove(exxFileName.c_str());
-			/*ofstream datafile(exxFileName.c_str());
-			if (datafile.is_open()) {
-				//cout<<"data file open"<<endl;
-				for (int idx2 = 0; idx2 < strain_output.strains.size();
-				idx2++) {
-					Data2D eyy_strains = strain_output.strains[idx2].get_eyy();
-					datafile << getMean(eyy_strains) << "\n";
-
-				}
-			}
-
-			datafile.close(); */
-			FILE* f = fopen(exxFileName.c_str(), "w");
-			if (f == NULL)
-			{
-				printf("Error opening file!\n");
-				exit(1);
-			}
-			else {
-				for (int idx2 = 0; idx2 < strain_output.strains.size();
-				idx2++) {
-					Data2D eyy_strains = strain_output.strains[idx2].get_eyy();
-					double d = getMean(eyy_strains);
-					fprintf(f, "%f\n", d);
-
-				}
-			}
-
-		}
-		if (exportVaribles[idx].compare("mean exy") == 0) {
-			string exxFileName = dataPath + "exy.txt";
-			remove(exxFileName.c_str());
-			/*ofstream datafile(exxFileName.c_str());
-			if (datafile.is_open()) {
-				//cout<<"data file open"<<endl;
-				for (int idx2 = 0; idx2 < strain_output.strains.size();
-				idx2++) {
-
-					Data2D exy_strains = strain_output.strains[idx2].get_exy();
-					datafile << getMean(exy_strains) << "\n";
-
-				}
-			}
-
-			datafile.close();*/
-
-			FILE* f = fopen(exxFileName.c_str(), "w");
-			if (f == NULL)
-			{
-				printf("Error opening file!\n");
-				exit(1);
-			}
-			else {
-				for (int idx2 = 0; idx2 < strain_output.strains.size();
-				idx2++) {
-
-					Data2D exy_strains = strain_output.strains[idx2].get_exy();
-					double d = getMean(exy_strains);
-					fprintf(f, "%f\n", d);
-
-				}
-			}
-
-		}
-		if (exportVaribles[idx].compare("mean e1") == 0) {
-			string exxFileName = dataPath + "e1.txt";
-			remove(exxFileName.c_str());
-			/*ofstream datafile(exxFileName.c_str());
-			if (datafile.is_open()) {
-				//cout<<"data file open"<<endl;
-				for (int idx2 = 0; idx2 < strain_output.strains.size();
-				idx2++) {
-
-					Data2D exy_strains = strain_output.strains[idx2].get_e1();
-					datafile << getMean(exy_strains) << "\n";
-
-				}
-			}
-
-			datafile.close();*/
-
-			FILE* f = fopen(exxFileName.c_str(), "w");
-			if (f == NULL)
-			{
-				printf("Error opening file!\n");
-				exit(1);
-			}
-			else {
-				for (int idx2 = 0; idx2 < strain_output.strains.size();
-				idx2++) {
-
-					Data2D exy_strains = strain_output.strains[idx2].get_e1();
-					double d = getMean(exy_strains);
-					fprintf(f, "%f\n", d);
-
-				}
-			}
-
-		} 
-	} 
+	
 	return 0;
 }
